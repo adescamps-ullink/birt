@@ -646,7 +646,8 @@ public class IOUtil
 				obValue = JavascriptEvalUtil.convertToJavascriptValue( ob );
 				break;
 			default :
-				assert false;
+			    obValue = Serializers.tryReadObject(dis, typeIndex);
+				assert obValue != null;
 		}
 
 		return obValue;
@@ -667,6 +668,9 @@ public class IOUtil
 		int typeIndex = getTypeIndex( obValue );
 		if ( typeIndex == -1 )
 		{
+		    if (Serializers.tryWriteObject(dos, obValue))
+		        return;
+		    
 			writeInt( dos, TYPE_NULL );
 			throw new NotSerializableException(
 					CoreMessages.getString( ResourceConstants.NOT_SERIALIZABLE ) );
